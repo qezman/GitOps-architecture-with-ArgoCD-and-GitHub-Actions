@@ -156,3 +156,23 @@ resource "aws_eks_node_group" "main" {
     Name = "${var.project}-${var.environment}-nodes"
   }
 }
+
+data "aws_caller_identity" "current" {}
+
+resource "aws_eks_access_entry" "terraform_user" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/eks-project-user"
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "terraform_user_admin" {
+  cluster_name  = aws_eks_cluster.main.name
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/eks-project-user"
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.terraform_user]
+}
