@@ -139,7 +139,7 @@ kubectl port-forward -n monitoring svc/kube-prometheus-stack-grafana 3000:80
 kubectl port-forward -n monitoring svc/prometheus-operated 9091:9090
 ```
 
-Grafana: `http://localhost:3000` — admin / fintrack-grafana-2025
+Grafana: `http://localhost:3000` - username: admin / password: fintrack-grafana-2025
 
 > Destroy when not in use: `terraform destroy -auto-approve`
 
