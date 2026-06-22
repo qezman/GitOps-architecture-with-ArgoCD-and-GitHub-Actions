@@ -39,3 +39,9 @@ variable "db_username" {
   type        = string
   default     = "fintrack_admin"
 }
+
+variable "gmail_app_password" {
+  description = "Gmail App Password for Alertmanager email notifications"
+  type        = string
+  sensitive   = true
+}

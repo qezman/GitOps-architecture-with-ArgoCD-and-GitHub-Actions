@@ -76,13 +76,13 @@ resource "helm_release" "cert_manager" {
 # Sealed Secrets
 resource "helm_release" "sealed_secrets" {
   name       = "sealed-secrets"
-  repository = "https://bitnami-labs.github.io/sealed-secrets"
+  repository = "https://bitnami.github.io/sealed-secrets"
   chart      = "sealed-secrets"
   namespace  = kubernetes_namespace.sealed_secrets.metadata[0].name
   version    = "2.15.3"
 
   wait    = false
-  timeout = 300
+  timeout = 600
 
   depends_on = [kubernetes_namespace.sealed_secrets]
 }
@@ -129,21 +129,49 @@ resource "helm_release" "kube_prometheus_stack" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   version    = "58.2.2"
 
-  set {
-    name  = "prometheus.prometheusSpec.resources.requests.memory"
-    value = "256Mi"
-  }
+  values = [<<-YAML
+    alertmanager:
+      enabled: true
+      config:
+        global:
+          smtp_smarthost: "smtp.gmail.com:587"
+          smtp_from: "holaryinka5050@gmail.com"
+          smtp_auth_username: "holaryinka5050@gmail.com"
+          smtp_auth_password: "${var.gmail_app_password}"
+          smtp_require_tls: true
+        route:
+          group_by: ["alertname", "namespace"]
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 12h
+          receiver: email
+          routes:
+            - matchers:
+                - alertname = "Watchdog"
+              receiver: "null"
+        receivers:
+          - name: "null"
+          - name: email
+            email_configs:
+              - to: "holaryinka5050@gmail.com"
+                send_resolved: true
+    prometheus:
+      prometheusSpec:
+        resources:
+          requests:
+            memory: "256Mi"
+          limits:
+            memory: "512Mi"
+        podMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelectorNilUsesHelmValues: false
+    grafana:
+      adminPassword: "fintrack-grafana-2025"
+      ingress:
+        enabled: false
+  YAML
+  ]
 
-  set {
-    name  = "prometheus.prometheusSpec.resources.limits.memory"
-    value = "512Mi"
-  }
-
-  set {
-    name  = "alertmanager.enabled"
-    value = "false"
-  }
-
+  # grafana
   set {
     name  = "grafana.adminPassword"
     value = "fintrack-grafana-2026"
@@ -171,4 +199,13 @@ resource "helm_release" "kube_prometheus_stack" {
     kubernetes_namespace.monitoring,
     helm_release.ingress_nginx
   ]
+}
+
+resource "null_resource" "coredns_fix" {
+  provisioner "local-exec" {
+    command     = "kubectl get configmap coredns -n kube-system -o yaml | sed 's|forward . /etc/resolv.conf|forward . 8.8.8.8 8.8.4.4|g' | kubectl apply -f - && kubectl rollout restart deployment coredns -n kube-system"
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+  depends_on = [helm_release.cert_manager]
 }
