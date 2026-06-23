@@ -156,6 +156,27 @@ resource "aws_iam_role_policy" "github_actions" {
   })
 }
 
+# EKS permissions for GitHub Actions
+resource "aws_iam_role_policy" "github_actions_eks" {
+  name = "${var.project}-${var.environment}-github-actions-eks-policy"
+  role = aws_iam_role.github_actions.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "eks:DescribeCluster",
+          "eks:ListClusters",
+          "eks:AccessKubernetesApi"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 # IRSA
 resource "aws_iam_role" "backend" {
   name = "${var.project}-${var.environment}-backend-role"
