@@ -45,3 +45,25 @@ variable "gmail_app_password" {
   type        = string
   sensitive   = true
 }
+
+variable "domain_name" {
+  description = "Root domain"
+  type        = string
+  default     = "qossim005.online"
+}
+
+variable "subdomain" {
+  description = "Full app subdomain"
+  type        = string
+  default     = "fintrack.qossim005.online"
+}
+
+variable "elb_dns_name" {
+  description = "ELB DNS name for ingress-nginx"
+  type        = string
+}
+
+variable "elb_zone_id" {
+  description = "ELB canonical hosted zone ID"
+  type        = string
+}

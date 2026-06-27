@@ -114,3 +114,13 @@ module "iam" {
   oidc_provider_url   = module.eks.oidc_provider_url
   receipts_bucket_arn = module.s3.bucket_arn
 }
+
+module "dns" {
+  source       = "../../modules/dns"
+  project      = var.project
+  environment  = var.environment
+  domain_name  = var.domain_name
+  subdomain    = var.subdomain
+  elb_dns_name = var.elb_dns_name
+  elb_zone_id  = var.elb_zone_id
+}

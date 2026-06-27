@@ -62,3 +62,12 @@ output "backend_ecr_url" {
   description = "Backend ECR repository URL"
   value       = module.iam.backend_ecr_url
 }
+
+output "nameservers" {
+  description = "Add these to Namecheap as custom nameservers"
+  value       = module.dns.nameservers
+}
+
+output "certificate_arn" {
+  value = module.dns.certificate_arn
+}
