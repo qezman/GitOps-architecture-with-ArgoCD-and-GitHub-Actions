@@ -17,10 +17,10 @@ Architecture Diagram
 | CI            | GitHub Actions with OIDC (no stored credentials) |
 | CD            | ArgoCD (pull-based GitOps)                       |
 | Secrets       | Bitnami Sealed Secrets                           |
-| TLS           | cert-manager + Let's Encrypt                     |
+| TLS           | AWS ACM                                          |
 | Ingress       | nginx-ingress + Classic ELB                      |
 | Monitoring    | Prometheus + Grafana + Alertmanager              |
-| DNS           | Namecheap CNAME → AWS ELB                        |
+| DNS           | Route53                                          |
 | DB Migrations | Prisma Migrate via Kubernetes Job in CI          |
 
 
