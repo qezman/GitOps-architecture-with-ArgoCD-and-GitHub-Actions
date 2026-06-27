@@ -67,3 +67,9 @@ variable "elb_zone_id" {
   description = "ELB canonical hosted zone ID"
   type        = string
 }
+
+variable "certificate_arn" {
+  description = "ACM certificate ARN"
+  type        = string
+  default = "443"
+}

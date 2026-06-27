@@ -26,11 +26,6 @@ resource "kubernetes_namespace" "argocd" {
 resource "kubernetes_namespace" "fintrack" {
   metadata {
     name = "fintrack"
-    labels = {
-      # tells cert-manager it can issue certificates
-      # for services in this namespace
-      "cert-manager.io/disable-validation" = "false"
-    }
   }
 }
 
@@ -46,6 +41,31 @@ resource "helm_release" "ingress_nginx" {
     name  = "controller.service.type"
     value = "LoadBalancer"
   }
+
+  set {
+    name  = "controller.service.type"
+    value = "LoadBalancer"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"
+    value = var.certificate_arn
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol"
+    value = "http"
+  }
+
+  set {
+    name  = "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"
+    value = "https"
+  }
+  
+  set {
+  name  = "controller.service.targetPorts.https"
+  value = "http"
+}
 
   # Don't wait for rollout
   wait    = false
