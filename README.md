@@ -210,7 +210,7 @@ kubectl port-forward -n monitoring svc/alertmanager-operated 9093:9093
 
 Full setup guide, architecture decisions, and redeployment walkthrough:
 
-[FinTrack Platform Documentation]([https://app.notion.com/p/FinTrack-EKS-Platform-38d604d0a68980168e51cf384b92a454?source=copy_link])
+[FinTrack Platform Documentation](https://polarized-boater-990.notion.site/FinTrack-EKS-Platform-38d604d0a68980168e51cf384b92a454)
 
 ## Author
 
